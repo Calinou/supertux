@@ -31,8 +31,8 @@ class Thunderstorm : public GameObject,
                      public ScriptInterface
 {
 public:
-  Thunderstorm(const Reader& reader);
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
+  Thunderstorm(const ReaderMapping& reader);
 
   void update(float elapsed_time);
   void draw(DrawingContext& context);

@@ -14,10 +14,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "object/powerup.hpp"
+
 #include "audio/sound_manager.hpp"
 #include "math/random_generator.hpp"
 #include "object/player.hpp"
-#include "object/powerup.hpp"
 #include "object/sprite_particle.hpp"
 #include "scripting/level.hpp"
 #include "sprite/sprite.hpp"
@@ -25,11 +26,11 @@
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
 #include <sstream>
 
-PowerUp::PowerUp(const Reader& lisp) :
+PowerUp::PowerUp(const ReaderMapping& lisp) :
   MovingSprite(lisp, LAYER_OBJECTS, COLGROUP_MOVING),
   physic(),
   script(),
@@ -93,7 +94,7 @@ PowerUp::PowerUp(const Vector& pos, const std::string& sprite_name_) :
 }
 
 void
-PowerUp::save(lisp::Writer& writer){
+PowerUp::save(Writer& writer){
   MovingSprite::save(writer);
   writer.write("no_physics",no_physics);
   if(script != ""){

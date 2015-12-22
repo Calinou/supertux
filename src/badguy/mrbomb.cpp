@@ -24,9 +24,9 @@
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
-MrBomb::MrBomb(const Reader& reader) :
+MrBomb::MrBomb(const ReaderMapping& reader) :
   WalkingBadguy(reader, "images/creatures/mr_bomb/mr_bomb.sprite", "left", "right"),
   grabbed()
 {
@@ -41,7 +41,7 @@ MrBomb::MrBomb(const Reader& reader) :
   if( !reader.get( "sprite", sprite_name ) ){
     return;
   }
-  if( sprite_name == "" ){
+  if (sprite_name.empty()) {
     sprite_name = "images/creatures/mr_bomb/mr_bomb.sprite";
     return;
   }

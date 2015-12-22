@@ -26,6 +26,7 @@
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
+#include "util/reader_mapping.hpp"
 
 #include <float.h>
 #include <math.h>
@@ -41,10 +42,8 @@ const float JUMP_UP_VY = -700; /**< vertical speed while jumping on the dais */
 
 const float STOMP_VY = -300; /** vertical speed while stomping on the dais */
 
-const float LEFT_STAND_X = 80; /**< x-coordinate of left dais' end position */
-const float RIGHT_STAND_X = 1280-LEFT_STAND_X-60; /**< x-coordinate of right dais' end position */
-const float LEFT_JUMP_X = LEFT_STAND_X+448; /**< x-coordinate of from where to jump on the left dais */
-const float RIGHT_JUMP_X = RIGHT_STAND_X-448; /**< x-coordinate of from where to jump on the right dais */
+const float RUN_DISTANCE = 1060; /** Distance between the x-coordinates of left and right end positions */
+const float JUMP_SPACE = 448; /** Distance between jump position and stand position */
 const float STOMP_WAIT = .5; /**< time we stay on the dais before jumping again */
 const float SAFE_TIME = .5; /**< the time we are safe when tux just hit us */
 const int INITIAL_HITPOINTS = 5; /**< number of hits we can take */
@@ -52,20 +51,46 @@ const int INITIAL_HITPOINTS = 5; /**< number of hits we can take */
 const float YETI_SQUISH_TIME = 5;
 }
 
-Yeti::Yeti(const Reader& reader) :
+Yeti::Yeti(const ReaderMapping& reader) :
   BadGuy(reader, "images/creatures/yeti/yeti.sprite"),
   state(),
   state_timer(),
   safe_timer(),
   stomp_count(),
   hit_points(),
-  hud_head()
+  hud_head(),
+  left_stand_x(),
+  right_stand_x(),
+  left_jump_x(),
+  right_jump_x()
 {
-  hit_points = INITIAL_HITPOINTS;
+  if ( !reader.get("lives", hit_points) ) {
+    hit_points = INITIAL_HITPOINTS;
+  }
   countMe = true;
   SoundManager::current()->preload("sounds/yeti_gna.wav");
   SoundManager::current()->preload("sounds/yeti_roar.wav");
-  hud_head = Surface::create("images/creatures/yeti/hudlife.png");
+
+  std::string hud_icon;
+  if ( !reader.get("hud-icon", hud_icon) ) {
+    hud_icon = "images/creatures/yeti/hudlife.png";
+  }
+  hud_head = Surface::create(hud_icon);
+
+  initialize();
+
+  bool fixed_pos;
+  if ( !reader.get("fixed-pos", fixed_pos) ) {
+    fixed_pos = false;
+  }
+  if (fixed_pos) {
+    left_stand_x = 80;
+    right_stand_x = 1140;
+    left_jump_x = 528;
+    right_jump_x = 692;
+  } else {
+    recalculate_pos();
+  }
 }
 
 Yeti::~Yeti()
@@ -77,6 +102,21 @@ Yeti::initialize()
 {
   dir = RIGHT;
   jump_down();
+}
+
+void
+Yeti::recalculate_pos()
+{
+  if (dir == RIGHT) {
+    left_stand_x = bbox.p1.x;
+    right_stand_x = left_stand_x + RUN_DISTANCE;
+  } else {
+    right_stand_x = bbox.p1.x;
+    left_stand_x = right_stand_x - RUN_DISTANCE;
+  }
+
+  left_jump_x = left_stand_x + JUMP_SPACE;
+  right_jump_x = right_stand_x - JUMP_SPACE;
 }
 
 void
@@ -117,15 +157,14 @@ Yeti::active_update(float elapsed_time)
       break;
     case RUN:
       physic.set_velocity_x((dir==RIGHT)?+RUN_VX:-RUN_VX);
-      if (((dir == RIGHT) && (get_pos().x >= RIGHT_JUMP_X)) || ((dir == LEFT) && (get_pos().x <= LEFT_JUMP_X))) jump_up();
+      if (((dir == RIGHT) && (get_pos().x >= right_jump_x)) || ((dir == LEFT) && (get_pos().x <= left_jump_x))) jump_up();
       break;
     case JUMP_UP:
       physic.set_velocity_x((dir==RIGHT)?+JUMP_UP_VX:-JUMP_UP_VX);
-      if (((dir == RIGHT) && (get_pos().x >= RIGHT_STAND_X)) || ((dir == LEFT) && (get_pos().x <= LEFT_STAND_X))) be_angry();
+      if (((dir == RIGHT) && (get_pos().x >= right_stand_x)) || ((dir == LEFT) && (get_pos().x <= left_stand_x))) be_angry();
       break;
     case BE_ANGRY:
-      if(state_timer.check()) {
-        SoundManager::current()->play("sounds/yeti_gna.wav");
+      if(state_timer.check() && on_ground()) {
         physic.set_velocity_y(STOMP_VY);
         sprite->set_action((dir==RIGHT)?"stomp-right":"stomp-left");
       }
@@ -175,7 +214,6 @@ Yeti::be_angry()
 
   sprite->set_action((dir==RIGHT) ? "stand-right" : "stand-left");
   physic.set_velocity_x(0);
-  physic.set_velocity_y(0);
   stomp_count = 0;
   state = BE_ANGRY;
   state_timer.start(STOMP_WAIT);
@@ -268,6 +306,7 @@ Yeti::drop_stalactite()
 void
 Yeti::collision_solid(const CollisionHit& hit)
 {
+  update_on_ground_flag(hit);
   if(hit.top || hit.bottom) {
     // hit floor or roof
     physic.set_velocity_y(0);
@@ -283,6 +322,7 @@ Yeti::collision_solid(const CollisionHit& hit)
         // we just landed
         if(!state_timer.started()) {
           sprite->set_action((dir==RIGHT)?"stand-right":"stand-left");
+          SoundManager::current()->play("sounds/yeti_gna.wav");
           stomp_count++;
           drop_stalactite();
 

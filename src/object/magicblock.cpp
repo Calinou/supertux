@@ -20,14 +20,15 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "object/camera.hpp"
 #include "object/magicblock.hpp"
+
+#include "object/camera.hpp"
 #include "sprite/sprite.hpp"
 #include "supertux/globals.hpp"
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
 namespace {
 const float MIN_INTENSITY = 0.8f;
@@ -37,7 +38,7 @@ const float MIN_SOLIDTIME = 1.0f;
 const float SWITCH_DELAY = 0.06f; /**< seconds to wait for stable conditions until switching solidity */
 }
 
-MagicBlock::MagicBlock(const Reader& lisp) :
+MagicBlock::MagicBlock(const ReaderMapping& lisp) :
   MovingSprite(lisp, "images/objects/magicblock/magicblock.sprite"),
   is_solid(false),
   trigger_red(),
@@ -76,7 +77,7 @@ MagicBlock::MagicBlock(const Reader& lisp) :
 }
 
 void
-MagicBlock::save(lisp::Writer& writer) {
+MagicBlock::save(Writer& writer) {
   MovingSprite::save(writer);
   writer.write("color", color.toVector(false));
 }

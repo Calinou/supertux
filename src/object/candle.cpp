@@ -22,9 +22,9 @@
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
-Candle::Candle(const Reader& lisp)
+Candle::Candle(const ReaderMapping& lisp)
   : MovingSprite(lisp, "images/objects/candle/candle.sprite", LAYER_BACKGROUNDTILES+1, COLGROUP_DISABLED),
     burning(true),
     flicker(true),
@@ -73,7 +73,7 @@ Candle::Candle(const Reader& lisp)
 }
 
 void
-Candle::save(lisp::Writer& writer) {
+Candle::save(Writer& writer) {
   MovingSprite::save(writer);
   writer.write("burning", burning);
   writer.write("flicker", flicker);

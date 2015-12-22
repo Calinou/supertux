@@ -23,8 +23,8 @@
 class DartTrap : public BadGuy
 {
 public:
-  DartTrap(const Reader& reader);
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
+  DartTrap(const ReaderMapping& reader);
 
   void initialize();
   void activate();

@@ -52,10 +52,10 @@ class AmbientSound : public GameObject,
                      public scripting::AmbientSound
 {
 public:
-  AmbientSound(const Reader& lisp);
+  AmbientSound(const ReaderMapping& lisp);
   AmbientSound(Vector pos, float factor, float bias, float vol, std::string file);
   ~AmbientSound();
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
 
   void set_pos(Vector newpos)
   {

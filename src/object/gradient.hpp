@@ -27,9 +27,9 @@ class Gradient : public GameObject
 {
 public:
   Gradient();
-  Gradient(const Reader& reader);
+  Gradient(const ReaderMapping& reader);
   virtual ~Gradient();
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
 
   void set_gradient(Color top, Color bottom);
 

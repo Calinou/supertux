@@ -25,7 +25,7 @@
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
 
-BicyclePlatform::BicyclePlatform(const Reader& reader) :
+BicyclePlatform::BicyclePlatform(const ReaderMapping& reader) :
   MovingSprite(reader, LAYER_OBJECTS, COLGROUP_STATIC),
   master(0),
   slave(0),

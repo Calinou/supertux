@@ -181,6 +181,9 @@
  arranged by
 	Chris Leutwyler
 
+\"halloween_1.ogg\" by
+	Forty-Two
+
 -Sound
 
 	Wolfgang Becker
@@ -318,7 +321,7 @@
 *http://supertuxproject.org
 
 	Or visit us directly at IRC:
-*#supertux at chat.freenode.net
+*#supertux at webchat.freenode.net
 
 	Or at our Forum:
 *http://forum.freegamedev.net/viewforum.php?f=66

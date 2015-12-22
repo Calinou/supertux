@@ -35,6 +35,7 @@
 #include "supertux/screen_manager.hpp"
 #include "supertux/sector.hpp"
 #include "supertux/tile.hpp"
+#include "supertux/tile_manager.hpp"
 #include "supertux/world.hpp"
 
 Editor::Editor() :
@@ -49,6 +50,7 @@ Editor::Editor() :
   save_request(false),
   currentsector(),
   levelloaded(false),
+  tileset(NULL),
   inputcenter(),
   tileselect(),
   layerselect(),
@@ -251,6 +253,7 @@ void Editor::reload_level() {
   level.reset(new Level);
   levelloaded = true;
   level->load(world->get_basedir() + "/" + levelfile);
+  tileset = TileManager::current()->get_tileset(level->get_tileset());
   load_sector("main");
   currentsector->activate("main");
   currentsector->camera->mode = Camera::MANUAL;

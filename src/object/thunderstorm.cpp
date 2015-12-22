@@ -24,6 +24,7 @@
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
 #include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
 namespace {
 const float LIGHTNING_DELAY = 2.0f;
@@ -31,7 +32,7 @@ const float FLASH_DISPLAY_TIME = 0.1f;
 const float ELECTRIFY_TIME = 0.5f;
 }
 
-Thunderstorm::Thunderstorm(const Reader& reader) :
+Thunderstorm::Thunderstorm(const ReaderMapping& reader) :
   running(true),
   interval(10.0f),
   layer(LAYER_BACKGROUNDTILES-1),
@@ -57,7 +58,7 @@ Thunderstorm::Thunderstorm(const Reader& reader) :
 }
 
 void
-Thunderstorm::save(lisp::Writer& writer) {
+Thunderstorm::save(Writer& writer) {
   GameObject::save(writer);
   writer.write("running", running);
   writer.write("interval", interval);
@@ -103,7 +104,7 @@ Thunderstorm::draw(DrawingContext& context)
 void
 Thunderstorm::expose(HSQUIRRELVM vm, SQInteger table_idx)
 {
-  if (name == "") return;
+  if (name.empty()) return;
   scripting::Thunderstorm* _this = new scripting::Thunderstorm(this);
   expose_object(vm, table_idx, _this, name, true);
 }
@@ -111,7 +112,7 @@ Thunderstorm::expose(HSQUIRRELVM vm, SQInteger table_idx)
 void
 Thunderstorm::unexpose(HSQUIRRELVM vm, SQInteger table_idx)
 {
-  if (name == "") return;
+  if (name.empty()) return;
   scripting::unexpose_object(vm, table_idx, name);
 }
 

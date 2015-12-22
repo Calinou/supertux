@@ -21,15 +21,15 @@
 
 #include "sprite/sprite.hpp"
 #include "trigger/trigger_base.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 #include "video/drawing_context.hpp"
 
 class Switch : public TriggerBase
 {
 public:
-  Switch(const Reader& reader);
+  Switch(const ReaderMapping& reader);
   virtual ~Switch();
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
   virtual std::string get_class() const {
     return "switch";
   }

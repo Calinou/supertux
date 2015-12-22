@@ -21,7 +21,7 @@
 #include "supertux/object_factory.hpp"
 #include "util/gettext.hpp"
 
-HurtingPlatform::HurtingPlatform(const Reader& reader)
+HurtingPlatform::HurtingPlatform(const ReaderMapping& reader)
   : Platform(reader)
 {
   set_group(COLGROUP_TOUCHABLE);

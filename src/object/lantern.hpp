@@ -26,10 +26,10 @@ class Lantern : public Rock
 {
 public:
   Lantern(const Vector& pos);
-  Lantern(const Reader& reader);
+  Lantern(const ReaderMapping& reader);
   void draw(DrawingContext& context);
   ~Lantern();
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
 
   HitResponse collision(GameObject& other, const CollisionHit& hit);
 

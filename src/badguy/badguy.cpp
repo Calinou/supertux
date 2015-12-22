@@ -30,7 +30,7 @@
 #include "supertux/level.hpp"
 #include "supertux/sector.hpp"
 #include "supertux/tile.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
 #include <math.h>
 #include <sstream>
@@ -100,7 +100,7 @@ BadGuy::BadGuy(const Vector& pos, Direction direction, const std::string& sprite
   dir = (start_dir == AUTO) ? LEFT : start_dir;
 }
 
-BadGuy::BadGuy(const Reader& reader, const std::string& sprite_name_, int layer_) :
+BadGuy::BadGuy(const ReaderMapping& reader, const std::string& sprite_name_, int layer_) :
   MovingSprite(reader, sprite_name_, layer_, COLGROUP_DISABLED),
   physic(),
   countMe(true),
@@ -249,7 +249,7 @@ BadGuy::update(float elapsed_time)
 }
 
 void
-BadGuy::save(lisp::Writer& writer) {
+BadGuy::save(Writer& writer) {
   MovingSprite::save(writer);
   if(dir == LEFT){
     writer.write("direction", "left", false);

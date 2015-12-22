@@ -18,18 +18,20 @@
 
 #include "sprite/sprite.hpp"
 #include "supertux/object_factory.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 #include "object/anchor_point.hpp"
 #include "util/gettext.hpp"
 
-Crystallo::Crystallo(const Reader& reader) :
+Crystallo::Crystallo(const ReaderMapping& reader) :
   WalkingBadguy(reader, "images/creatures/crystallo/crystallo.sprite", "left", "right"),
   radius()
 {
   walk_speed = 80;
   max_drop_height = 16;
-  radius = 100;
-  reader.get("radius", radius);
+
+  if ( !reader.get("radius", radius)) {
+    radius = 100;
+  }
 }
 
 Crystallo::Crystallo(const Vector& pos, Direction d) :
@@ -42,7 +44,7 @@ Crystallo::Crystallo(const Vector& pos, Direction d) :
 }
 
 void
-Crystallo::save(lisp::Writer& writer){
+Crystallo::save(Writer& writer){
   BadGuy::save(writer);
   writer.write("radius",radius);
 }

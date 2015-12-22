@@ -25,12 +25,12 @@
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
 #define TIME_EXPLOSION 5.0
 #define TIME_STUNNED   0.5
 
-Haywire::Haywire(const Reader& reader) :
+Haywire::Haywire(const ReaderMapping& reader) :
   WalkingBadguy(reader, "images/creatures/haywire/haywire.sprite", "left", "right"),
   is_exploding(false),
   time_until_explosion(0.0f),
@@ -49,24 +49,12 @@ Haywire::Haywire(const Reader& reader) :
   if( !reader.get( "sprite", sprite_name ) ){
     return;
   }
-  if( sprite_name == "" ){
+  if (sprite_name.empty()) {
     sprite_name = "images/creatures/haywire/haywire.sprite";
     return;
   }
   //Replace sprite
   sprite = SpriteManager::current()->create( sprite_name );
-}
-
-HitResponse
-Haywire::collision(GameObject& object, const CollisionHit& hit)
-{
-  return WalkingBadguy::collision(object, hit);
-}
-
-HitResponse
-Haywire::collision_player(Player& player, const CollisionHit& hit)
-{
-  return WalkingBadguy::collision_player(player, hit);
 }
 
 bool
@@ -137,10 +125,8 @@ Haywire::active_update(float elapsed_time)
   if (is_stunned) {
     if (time_stunned > elapsed_time) {
       time_stunned -= elapsed_time;
-      return;
     }
     else { /* if (time_stunned <= elapsed_time) */
-      elapsed_time -= time_stunned;
       time_stunned = 0.0;
       is_stunned = false;
     }
@@ -150,7 +136,7 @@ Haywire::active_update(float elapsed_time)
     Player *p = get_nearest_player ();
     float target_velocity = 0.0;
 
-    if (p) {
+    if (p && time_stunned == 0.0) {
       /* Player is on the right */
       if (p->get_pos ().x > this->get_pos ().x)
         target_velocity = walk_speed;

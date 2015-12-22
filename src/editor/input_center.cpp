@@ -495,7 +495,7 @@ EditorInputCenter::draw_tile_tip(DrawingContext& context) {
     context.push_transform();
     context.set_alpha(0.5);
 
-    const Tile* tg_tile = Editor::current()->level->tileset->get( Editor::current()->tileselect.tile );
+    const Tile* tg_tile = Editor::current()->tileset->get( Editor::current()->tileselect.tile );
     tg_tile->draw(context, tp_to_sp(hovered_tile) - Editor::current()->currentsector->camera->get_translation(),
                   LAYER_GUI-11);
 

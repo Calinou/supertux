@@ -25,12 +25,12 @@
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
 #include "util/log.hpp"
+#include "util/reader_mapping.hpp"
 
 #define EXPLOSION_FORCE 1000.0f
 
-ShortFuse::ShortFuse(const Reader& reader) :
+ShortFuse::ShortFuse(const ReaderMapping& reader) :
   WalkingBadguy(reader, "images/creatures/short_fuse/short_fuse.sprite", "left", "right")
 {
   walk_speed = 100;
@@ -40,7 +40,7 @@ ShortFuse::ShortFuse(const Reader& reader) :
   if( !reader.get( "sprite", sprite_name ) ){
     return;
   }
-  if( sprite_name == "" ){
+  if (sprite_name.empty()) {
     sprite_name = "images/creatures/short_fuse/short_fuse.sprite";
     return;
   }

@@ -26,10 +26,10 @@ class Player;
 class Door : public TriggerBase
 {
 public:
-  Door(const Reader& reader);
+  Door(const ReaderMapping& reader);
   Door(int x, int y, std::string sector, std::string spawnpoint);
   virtual ~Door();
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
   virtual std::string get_class() const {
     return "door";
   }

@@ -17,18 +17,20 @@
 #ifndef HEADER_SUPERTUX_SUPERTUX_SPAWN_POINT_HPP
 #define HEADER_SUPERTUX_SUPERTUX_SPAWN_POINT_HPP
 
+#include <string>
+
 #include "math/vector.hpp"
-#include "lisp/writer.hpp"
 #include "util/reader_fwd.hpp"
+#include "util/writer.hpp"
 
 class SpawnPoint
 {
 public:
   SpawnPoint();
   SpawnPoint(const SpawnPoint& other);
-  SpawnPoint(const Reader& lisp);
+  SpawnPoint(const ReaderMapping& lisp);
 
-  void save(lisp::Writer& writer);
+  void save(Writer& writer);
 
   std::string name;
   Vector pos;

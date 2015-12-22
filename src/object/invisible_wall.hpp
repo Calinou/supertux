@@ -26,8 +26,8 @@ class Player;
 class InvisibleWall : public MovingSprite
 {
 public:
-  InvisibleWall(const Reader& lisp);
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
+  InvisibleWall(const ReaderMapping& lisp);
 
   HitResponse collision(GameObject& other, const CollisionHit& hit);
   virtual std::string get_class() const {

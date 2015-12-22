@@ -31,7 +31,7 @@ class BadGuy : public MovingSprite
 public:
   BadGuy(const Vector& pos, const std::string& sprite_name, int layer = LAYER_OBJECTS);
   BadGuy(const Vector& pos, Direction direction, const std::string& sprite_name, int layer = LAYER_OBJECTS);
-  BadGuy(const Reader& reader, const std::string& sprite_name, int layer = LAYER_OBJECTS);
+  BadGuy(const ReaderMapping& reader, const std::string& sprite_name, int layer = LAYER_OBJECTS);
 
   /** Called when the badguy is drawn. The default implementation
       simply draws the badguy sprite on screen */
@@ -41,7 +41,7 @@ public:
       state and calls active_update and inactive_update */
   virtual void update(float elapsed_time);
 
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
   virtual std::string get_class() const {
     return "badguy";
   }

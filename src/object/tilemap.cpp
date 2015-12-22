@@ -14,6 +14,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "object/tilemap.hpp"
+
 #include <math.h>
 
 #include "editor/editor.hpp"
@@ -21,10 +23,14 @@
 #include "scripting/squirrel_util.hpp"
 #include "scripting/tilemap.hpp"
 #include "supertux/globals.hpp"
+#include "supertux/level.hpp"
 #include "supertux/object_factory.hpp"
+#include "supertux/sector.hpp"
 #include "supertux/tile_manager.hpp"
 #include "supertux/tile_set.hpp"
 #include "util/reader.hpp"
+#include "util/reader_document.hpp"
+#include "util/reader_mapping.hpp"
 
 TileMap::TileMap(const TileSet *new_tileset) :
   editor_active(true),
@@ -49,9 +55,9 @@ TileMap::TileMap(const TileSet *new_tileset) :
 {
 }
 
-TileMap::TileMap(const Reader& reader) :
+TileMap::TileMap(const TileSet *tileset_, const ReaderMapping& reader) :
   editor_active(true),
-  tileset(),
+  tileset(tileset_),
   tiles(),
   real_solid(false),
   effective_solid(false),
@@ -70,8 +76,7 @@ TileMap::TileMap(const Reader& reader) :
   walker(),
   draw_target(DrawingContext::NORMAL)
 {
-  tileset = current_tileset;
-  assert(tileset != NULL);
+  assert(tileset);
 
   reader.get("name",   name);
   reader.get("solid",  real_solid);
@@ -86,10 +91,10 @@ TileMap::TileMap(const Reader& reader) :
     speed_y = 1;
   }
 
-  const lisp::Lisp* pathLisp = reader.get_lisp("path");
-  if (pathLisp) {
+  ReaderMapping path_mapping;
+  if (reader.get("path", path_mapping)) {
     path.reset(new Path());
-    path->read(*pathLisp);
+    path->read(path_mapping);
     walker.reset(new PathWalker(path.get(), /*running*/false));
     Vector v = path->get_base();
     set_offset(v);
@@ -137,42 +142,12 @@ TileMap::TileMap(const Reader& reader) :
   }
 }
 
-TileMap::TileMap(const TileSet *new_tileset, std::string name_, int z_pos_,
-                 bool solid, size_t width_, size_t height_) :
-  editor_active(true),
-  tileset(new_tileset),
-  tiles(),
-  real_solid(solid),
-  effective_solid(solid),
-  speed_x(1),
-  speed_y(1),
-  width(0),
-  height(0),
-  z_pos(z_pos_),
-  offset(Vector(0,0)),
-  movement(Vector(0,0)),
-  drawing_effect(NO_EFFECT),
-  alpha(1.0),
-  current_alpha(1.0),
-  remaining_fade_time(0),
-  path(),
-  walker(),
-  draw_target(DrawingContext::NORMAL)
-{
-  this->name = name_;
-
-  if (this->z_pos > (LAYER_GUI - 100))
-    this->z_pos = LAYER_GUI - 100;
-
-  resize(width_, height_);
-}
-
 TileMap::~TileMap()
 {
 }
 
 void
-TileMap::save(lisp::Writer& writer) {
+TileMap::save(Writer& writer) {
   GameObject::save(writer);
   if (draw_target == LIGHTMAP) {
     writer.write("draw-target", "lightmap", false);

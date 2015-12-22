@@ -25,9 +25,9 @@
 class Crystallo : public WalkingBadguy
 {
 public:
-  Crystallo(const Reader& reader);
+  Crystallo(const ReaderMapping& reader);
   Crystallo(const Vector& pos, Direction d);
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
   virtual std::string get_class() const {
     return "crystallo";
   }

@@ -28,9 +28,9 @@
 #include "supertux/screen_manager.hpp"
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
-Door::Door(const Reader& reader) :
+Door::Door(const ReaderMapping& reader) :
   state(CLOSED),
   target_sector(),
   target_spawnpoint(),
@@ -72,7 +72,7 @@ Door::Door(int x, int y, std::string sector, std::string spawnpoint) :
 }
 
 void
-Door::save(lisp::Writer& writer) {
+Door::save(Writer& writer) {
   MovingObject::save(writer);
   writer.write("sector", target_sector, false);
   writer.write("spawnpoint", target_spawnpoint, false);

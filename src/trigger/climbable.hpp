@@ -29,10 +29,10 @@ class Climbable : public TriggerBase
 {
   static Color text_color;
 public:
-  Climbable(const Reader& reader);
+  Climbable(const ReaderMapping& reader);
   Climbable(const Rectf& area);
   ~Climbable();
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
   virtual std::string get_class() const {
     return "climbable";
   }

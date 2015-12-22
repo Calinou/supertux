@@ -15,11 +15,13 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "object/decal.hpp"
+
 #include "supertux/object_factory.hpp"
 #include "util/gettext.hpp"
 #include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
-Decal::Decal(const Reader& reader) :
+Decal::Decal(const ReaderMapping& reader) :
   MovingSprite(reader, LAYER_OBJECTS, COLGROUP_DISABLED),
   default_action()
 {
@@ -34,7 +36,7 @@ Decal::Decal(const Reader& reader) :
 }
 
 void
-Decal::save(lisp::Writer& writer) {
+Decal::save(Writer& writer) {
   MovingSprite::save(writer);
   writer.write("solid", group == COLGROUP_STATIC);
   writer.write("action", default_action);

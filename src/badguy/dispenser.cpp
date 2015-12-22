@@ -23,12 +23,12 @@
 #include "object/player.hpp"
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
-#include "util/reader.hpp"
 #include "util/gettext.hpp"
+#include "util/reader_mapping.hpp"
 
 #include <stdexcept>
 
-Dispenser::Dispenser(const Reader& reader) :
+Dispenser::Dispenser(const ReaderMapping& reader) :
   BadGuy(reader, "images/creatures/dispenser/dispenser.sprite"),
   colgroup_active(),
   cycle(),
@@ -43,12 +43,11 @@ Dispenser::Dispenser(const Reader& reader) :
 {
   set_colgroup_active(COLGROUP_MOVING_STATIC);
   SoundManager::current()->preload("sounds/squish.wav");
-  reader.get("cycle", cycle);
-  reader.get("badguy", badguys);
-  random = false; // default
-  reader.get("random", random);
+  if ( !reader.get("cycle", cycle)) cycle = 5;
+  if ( !reader.get("badguy", badguys)) badguys.clear();
+  if ( !reader.get("random", random)) random = false;
   std::string type_s = "dropper"; //default
-  reader.get("type", type_s);
+  if ( !reader.get("type", type_s)) type_s = "";
   if (type_s == "dropper") {
     type = DT_DROPPER;
   } else if (type_s == "rocketlauncher") {
@@ -91,7 +90,7 @@ Dispenser::Dispenser(const Reader& reader) :
 }
 
 void
-Dispenser::save(lisp::Writer& writer) {
+Dispenser::save(Writer& writer) {
   BadGuy::save(writer);
   switch (type) {
     case DT_DROPPER:

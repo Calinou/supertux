@@ -25,10 +25,10 @@ class Player;
 class SkullTile : public MovingSprite
 {
 public:
-  SkullTile(const Reader& lisp);
   virtual std::string get_class() const {
     return "skulltile";
   }
+  SkullTile(const ReaderMapping& lisp);
 
   HitResponse collision(GameObject& other, const CollisionHit& hit);
   void update(float elapsed_time);

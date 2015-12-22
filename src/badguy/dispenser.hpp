@@ -22,8 +22,8 @@
 class Dispenser : public BadGuy
 {
 public:
-  Dispenser(const Reader& reader);
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
+  Dispenser(const ReaderMapping& reader);
 
   void activate();
   void deactivate();

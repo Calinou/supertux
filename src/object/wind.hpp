@@ -30,8 +30,8 @@ class Wind : public MovingObject,
              public ScriptInterface
 {
 public:
-  Wind(const Reader& reader);
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
+  Wind(const ReaderMapping& reader);
 
   void update(float elapsed_time);
   void draw(DrawingContext& context);

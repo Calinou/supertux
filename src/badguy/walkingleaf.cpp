@@ -20,7 +20,7 @@
 #include "supertux/object_factory.hpp"
 #include "util/gettext.hpp"
 
-WalkingLeaf::WalkingLeaf(const Reader& reader) :
+WalkingLeaf::WalkingLeaf(const ReaderMapping& reader) :
   WalkingBadguy(reader, "images/creatures/walkingleaf/walkingleaf.sprite", "left", "right")
 {
   walk_speed = 60;

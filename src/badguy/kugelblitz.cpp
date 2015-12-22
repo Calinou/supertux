@@ -28,14 +28,14 @@
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
 #define  LIFETIME 5
 #define  MOVETIME 0.75
 #define  BASE_SPEED 200
 #define  RAND_SPEED 150
 
-Kugelblitz::Kugelblitz(const Reader& reader) :
+Kugelblitz::Kugelblitz(const ReaderMapping& reader) :
   BadGuy(reader, "images/creatures/kugelblitz/kugelblitz.sprite"),
   pos_groundhit(),
   groundhit_pos_set(false),
@@ -46,7 +46,7 @@ Kugelblitz::Kugelblitz(const Reader& reader) :
   light(0.0f,0.0f,0.0f),
   lightsprite(SpriteManager::current()->create("images/objects/lightmap_light/lightmap_light.sprite"))
 {
-  reader.get("x", start_position.x);
+  start_position.x = bbox.p1.x;
   sprite->set_action("falling");
   physic.enable_gravity(false);
   countMe = false;

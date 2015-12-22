@@ -23,11 +23,11 @@
 #include "supertux/sector.hpp"
 #include "supertux/tile.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
 #include <sstream>
 
-Ispy::Ispy(const Reader& reader) :
+Ispy::Ispy(const ReaderMapping& reader) :
   MovingSprite(reader, "images/objects/ispy/ispy.sprite", LAYER_TILES+5, COLGROUP_DISABLED),
   state(ISPYSTATE_IDLE),
   script(),
@@ -51,7 +51,7 @@ Ispy::Ispy(const Reader& reader) :
 }
 
 void
-Ispy::save(lisp::Writer& writer) {
+Ispy::save(Writer& writer) {
   MovingSprite::save(writer);
   switch (dir) {
     case LEFT:  writer.write("direction", "left" , false); break;

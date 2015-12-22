@@ -18,10 +18,12 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "lisp/parser.hpp"
 #include "math/vector.hpp"
-#include "util/reader.hpp"
+#include "util/reader_document.hpp"
+#include "util/reader_mapping.hpp"
 #include "supertux/object_factory.hpp"
+#include "supertux/level.hpp"
+#include "supertux/tile_manager.hpp"
 
 #include "badguy/angrystone.hpp"
 #include "badguy/badguy.hpp"
@@ -267,7 +269,6 @@ ObjectFactory::init_factories()
   add_factory<SkullTile>("skull_tile");
   add_factory<Spotlight>("spotlight");
   add_factory<Thunderstorm>("thunderstorm");
-  add_factory<TileMap>("tilemap");
   add_factory<Torch>("torch");
   add_factory<Trampoline>("trampoline");
   add_factory<RustyTrampoline>("rustytrampoline");
@@ -282,10 +283,15 @@ ObjectFactory::init_factories()
   add_factory<SecretAreaTrigger>("secretarea");
   add_factory<SequenceTrigger>("sequencetrigger");
   add_factory<Switch>("switch");
+
+  add_factory("tilemap", [](const ReaderMapping& reader) {
+      auto tileset = TileManager::current()->get_tileset(Level::current()->get_tileset());
+      return std::make_shared<TileMap>(tileset, reader);
+    });
 }
 
 GameObjectPtr
-ObjectFactory::create(const std::string& name, const Reader& reader) const
+ObjectFactory::create(const std::string& name, const ReaderMapping& reader) const
 {
   Factories::const_iterator i = factories.find(name);
 
@@ -297,7 +303,7 @@ ObjectFactory::create(const std::string& name, const Reader& reader) const
   }
   else
   {
-    return i->second->create(reader);
+    return i->second(reader);
   }
 }
 
@@ -305,7 +311,8 @@ GameObjectPtr
 ObjectFactory::create(const std::string& name, const Vector& pos, const Direction& dir, const std::string& data) const
 {
   std::stringstream lisptext;
-  lisptext << "((x " << pos.x << ")"
+  lisptext << "(" << name << "\n"
+           << " (x " << pos.x << ")"
            << " (y " << pos.y << ")" << data;
   if(dir != AUTO) {
     lisptext << " (direction " << dir << "))";
@@ -313,10 +320,8 @@ ObjectFactory::create(const std::string& name, const Vector& pos, const Directio
     lisptext << ")";
   }
 
-  lisp::Parser parser;
-  const lisp::Lisp* lisp = parser.parse(lisptext, "create_object");
-
-  return create(name, *(lisp->get_car()));
+  auto doc = ReaderDocument::parse(lisptext);
+  return create(name, doc.get_root().get_mapping());
 }
 
 /* EOF */

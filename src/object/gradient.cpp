@@ -15,11 +15,13 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "object/gradient.hpp"
+
 #include "object/camera.hpp"
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
 #include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
 #include <stdexcept>
 
@@ -32,7 +34,7 @@ Gradient::Gradient() :
 {
 }
 
-Gradient::Gradient(const Reader& reader) :
+Gradient::Gradient(const ReaderMapping& reader) :
   layer(LAYER_BACKGROUND0),
   gradient_top(),
   gradient_bottom(),
@@ -89,7 +91,7 @@ Gradient::Gradient(const Reader& reader) :
 }
 
 void
-Gradient::save(lisp::Writer& writer) {
+Gradient::save(Writer& writer) {
   GameObject::save(writer);
   writer.write("z-pos",layer);
   switch (gradient_direction) {

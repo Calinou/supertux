@@ -24,19 +24,19 @@
 #include "sprite/sprite.hpp"
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 #include "util/log.hpp"
 #include "util/gettext.hpp"
 
 #define FLYING_SPEED 120.0
 #define ACTIVATION_DISTANCE 128.0
 
-Owl::Owl(const Reader& reader) :
+Owl::Owl(const ReaderMapping& reader) :
   BadGuy(reader, "images/creatures/owl/owl.sprite", LAYER_OBJECTS + 1),
-  carried_obj_name("skydive"),
+  carried_obj_name(),
   carried_object(NULL)
 {
-  reader.get("carry", carried_obj_name);
+  if ( !reader.get("carry", carried_obj_name)) carried_obj_name = "skydive";
   set_action (dir == LEFT ? "left" : "right", /* loops = */ -1);
 }
 
@@ -49,7 +49,7 @@ Owl::Owl(const Vector& pos, Direction d) :
 }
 
 void
-Owl::save(lisp::Writer& writer) {
+Owl::save(Writer& writer) {
   BadGuy::save(writer);
   writer.write("carry", carried_obj_name);
 }

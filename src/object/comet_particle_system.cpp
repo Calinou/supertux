@@ -22,6 +22,8 @@
 #include "video/surface.hpp"
 #include "util/gettext.hpp"
 #include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
+#include "video/surface.hpp"
 
 CometParticleSystem::CometParticleSystem()
 {
@@ -47,7 +49,7 @@ CometParticleSystem::CometParticleSystem()
 }
 
 void
-CometParticleSystem::parse(const Reader& reader)
+CometParticleSystem::parse(const ReaderMapping& reader)
 {
   z_pos = reader_get_layer (reader, /* default = */ LAYER_BACKGROUND1);
 }

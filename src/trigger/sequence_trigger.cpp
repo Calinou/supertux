@@ -14,12 +14,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "trigger/sequence_trigger.hpp"
+
 #include "object/player.hpp"
 #include "supertux/object_factory.hpp"
-#include "trigger/sequence_trigger.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
-SequenceTrigger::SequenceTrigger(const Reader& reader) :
+SequenceTrigger::SequenceTrigger(const ReaderMapping& reader) :
   triggerevent(),
   sequence_name()
 {
@@ -48,7 +49,7 @@ SequenceTrigger::~SequenceTrigger()
 }
 
 void
-SequenceTrigger::save(lisp::Writer& writer) {
+SequenceTrigger::save(Writer& writer) {
   MovingObject::save(writer);
   writer.write("width", bbox.get_width());
   writer.write("height", bbox.get_height());

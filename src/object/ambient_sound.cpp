@@ -25,9 +25,9 @@
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
-AmbientSound::AmbientSound(const Reader& lisp) :
+AmbientSound::AmbientSound(const ReaderMapping& lisp) :
   position(),
   dimension(),
   sample(),
@@ -133,7 +133,7 @@ AmbientSound::~AmbientSound()
 }
 
 void
-AmbientSound::save(lisp::Writer& writer) {
+AmbientSound::save(Writer& writer) {
   GameObject::save(writer);
   writer.write("width", dimension.x);
   writer.write("height", dimension.y);

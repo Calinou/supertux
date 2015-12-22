@@ -21,7 +21,6 @@
 
 #include "math/vector.hpp"
 #include "supertux/game_object.hpp"
-#include "util/reader.hpp"
 #include "video/surface_ptr.hpp"
 
 class DisplayManager;
@@ -46,7 +45,7 @@ class ParticleSystem : public GameObject
 public:
   ParticleSystem(float max_particle_size = 60);
   virtual ~ParticleSystem();
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
   virtual std::string get_class() const {
     return "particle-system";
   }
@@ -81,7 +80,7 @@ protected:
 
   float max_particle_size;
   int z_pos;
-  std::vector<Particle*> particles;
+  std::vector<std::unique_ptr<Particle> > particles;
   float virtual_width;
   float virtual_height;
 };

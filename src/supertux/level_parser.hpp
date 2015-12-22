@@ -1,5 +1,5 @@
 //  SuperTux
-//  Copyright (C) 2009 Ingo Ruhnke <grumbel@gmail.com>
+//  Copyright (C) 2015 Ingo Ruhnke <grumbel@gmail.com>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -14,16 +14,34 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEADER_SUPERTUX_UTIL_WRITER_FWD_HPP
-#define HEADER_SUPERTUX_UTIL_WRITER_FWD_HPP
+#ifndef HEADER_SUPERTUX_SUPERTUX_LEVEL_PARSER_HPP
+#define HEADER_SUPERTUX_SUPERTUX_LEVEL_PARSER_HPP
 
-namespace lisp {
-class Writer;
-} // namespace lisp
+#include <memory>
+#include <string>
 
-typedef lisp::Writer Writer;
+class Level;
+class ReaderMapping;
+
+class LevelParser
+{
+public:
+  static std::unique_ptr<Level> from_file(const std::string& filename);
+
+private:
+  LevelParser(Level& level);
+
+  void load(const std::string& filepath);
+  void load_old_format(const ReaderMapping& reader);
+
+private:
+  Level& m_level;
+
+private:
+  LevelParser(const LevelParser&) = delete;
+  LevelParser& operator=(const LevelParser&) = delete;
+};
 
 #endif
 
 /* EOF */
-

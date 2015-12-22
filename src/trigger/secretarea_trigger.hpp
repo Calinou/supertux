@@ -22,7 +22,6 @@
 #include "object/tilemap.hpp"
 #include "supertux/timer.hpp"
 #include "util/reader_fwd.hpp"
-#include "util/writer_fwd.hpp"
 
 class DrawingContext;
 class Color;
@@ -31,10 +30,10 @@ class SecretAreaTrigger : public TriggerBase
 {
   static Color text_color;
 public:
-  SecretAreaTrigger(const Reader& reader);
+  SecretAreaTrigger(const ReaderMapping& reader);
   SecretAreaTrigger(const Rectf& area, std::string fade_tilemap = "");
   ~SecretAreaTrigger();
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
   virtual std::string get_class() const {
     return "secretarea";
   }

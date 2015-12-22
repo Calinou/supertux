@@ -18,7 +18,6 @@
 
 #include "audio/sound_manager.hpp"
 #include "badguy/badguy.hpp"
-#include "lisp/list_iterator.hpp"
 #include "object/flower.hpp"
 #include "object/bouncy_coin.hpp"
 #include "object/coin_explode.hpp"
@@ -37,6 +36,7 @@
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
+#include "util/reader_mapping.hpp"
 
 #include <stdexcept>
 
@@ -54,7 +54,7 @@ BonusBlock::BonusBlock(const Vector& pos, int data) :
   get_content_by_data(data);
 }
 
-BonusBlock::BonusBlock(const Reader& lisp) :
+BonusBlock::BonusBlock(const ReaderMapping& lisp) :
   Block(SpriteManager::current()->create("images/objects/bonus_block/bonusblock.sprite")),
   contents(),
   object(0),
@@ -66,31 +66,32 @@ BonusBlock::BonusBlock(const Reader& lisp) :
   Vector pos;
 
   contents = CONTENT_COIN;
-  lisp::ListIterator iter(&lisp);
+  auto iter = lisp.get_iter();
   while(iter.next()) {
-    const std::string& token = iter.item();
+    const std::string& token = iter.get_key();
     if(token == "x") {
-      iter.value()->get(pos.x);
+      iter.get(pos.x);
     } else if(token == "y") {
-      iter.value()->get(pos.y);
+      iter.get(pos.y);
     } else if(token == "sprite") {
-      iter.value()->get(sprite_name);
+      iter.get(sprite_name);
       sprite = SpriteManager::current()->create(sprite_name);
     } else if(token == "count") {
-      iter.value()->get(hit_counter);
+      iter.get(hit_counter);
     } else if(token == "script") {
-      iter.value()->get(script);
+      iter.get(script);
     } else if(token == "data") {
       int d = 0;
-      iter.value()->get(d);
+      iter.get(d);
       get_content_by_data(d);
     } else if(token == "contents") {
       std::string contentstring;
-      iter.value()->get(contentstring);
+      iter.get(contentstring);
       contents = get_content_from_string(contentstring);
     } else {
       if(contents == CONTENT_CUSTOM) {
-        GameObjectPtr game_object = ObjectFactory::instance().create(token, *(iter.lisp()));
+        ReaderMapping object_mapping = iter.as_mapping();
+        GameObjectPtr game_object = ObjectFactory::instance().create(token, object_mapping);
         object = std::dynamic_pointer_cast<MovingObject>(game_object);
         if(object == 0)
           throw std::runtime_error(
@@ -152,7 +153,7 @@ BonusBlock::~BonusBlock()
 }
 
 void
-BonusBlock::save(lisp::Writer& writer) {
+BonusBlock::save(Writer& writer) {
   Block::save(writer);
   switch (contents) {
     case CONTENT_COIN:       writer.write("contents", "coin"      , false); break;

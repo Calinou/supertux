@@ -14,12 +14,10 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "lisp/writer.hpp"
+#include "util/writer.hpp"
 
 #include "physfs/ofile_stream.hpp"
 #include "util/log.hpp"
-
-namespace lisp {
 
 Writer::Writer(const std::string& filename) :
   out(),
@@ -105,6 +103,15 @@ Writer::write(const std::string& name, float value)
 {
   indent();
   *out << '(' << name << ' ' << value << ")\n";
+}
+
+/** This function is needed to properly resolve the overloaded write()
+    function, without it the call write("foo", "bar") would call
+    write(name, bool), not write(name, string, bool) */
+void
+Writer::write(const std::string& name, const char* value)
+{
+  write(name, value, false);
 }
 
 void
@@ -198,7 +205,5 @@ Writer::indent()
   for(int i = 0; i<indent_depth; ++i)
     *out << ' ';
 }
-
-} // end of namespace lisp
 
 /* EOF */

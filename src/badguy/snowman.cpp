@@ -23,7 +23,7 @@
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
 
-Snowman::Snowman(const Reader& reader) :
+Snowman::Snowman(const ReaderMapping& reader) :
   WalkingBadguy(reader, "images/creatures/snowman/snowman.sprite", "walk-left", "walk-right")
 {
   walk_speed = 40;

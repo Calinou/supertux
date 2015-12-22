@@ -24,7 +24,7 @@ class Brick : public Block
 {
 public:
   Brick(const Vector& pos, int data, const std::string& spriteName);
-  Brick(const Reader& lisp);
+  Brick(const ReaderMapping& lisp);
 
   void try_break(Player* player);
   HitResponse collision(GameObject& other, const CollisionHit& hit);

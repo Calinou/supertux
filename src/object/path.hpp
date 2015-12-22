@@ -21,10 +21,9 @@
 
 #include <vector>
 
-#include "lisp/writer.hpp"
 #include "math/vector.hpp"
 #include "util/reader_fwd.hpp"
-#include "util/writer_fwd.hpp"
+#include "util/writer.hpp"
 
 class Path
 {
@@ -32,8 +31,8 @@ public:
   Path();
   ~Path();
 
-  void read(const Reader& reader);
-  void save(lisp::Writer& writer);
+  void save(Writer& writer);
+  void read(const ReaderMapping& reader);
 
   Vector get_base() const;
 

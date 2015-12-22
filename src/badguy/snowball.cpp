@@ -20,7 +20,7 @@
 #include "supertux/object_factory.hpp"
 #include "util/gettext.hpp"
 
-SnowBall::SnowBall(const Reader& reader)
+SnowBall::SnowBall(const ReaderMapping& reader)
   : WalkingBadguy(reader, "images/creatures/snowball/snowball.sprite", "left", "right")
 {
   walk_speed = 80;

@@ -18,9 +18,9 @@
 
 #include "supertux/object_factory.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
-InvisibleWall::InvisibleWall(const Reader& lisp) :
+InvisibleWall::InvisibleWall(const ReaderMapping& lisp) :
   MovingSprite(lisp, "images/objects/invisible/invisible.sprite", LAYER_TILES, COLGROUP_STATIC),
   physic(),
   width(32),
@@ -32,7 +32,7 @@ InvisibleWall::InvisibleWall(const Reader& lisp) :
 }
 
 void
-InvisibleWall::save(lisp::Writer& writer) {
+InvisibleWall::save(Writer& writer) {
   MovingSprite::save(writer);
   writer.write("width", width);
   writer.write("height", height);

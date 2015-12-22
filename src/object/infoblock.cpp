@@ -21,14 +21,15 @@
 #include "object/player.hpp"
 #include "sprite/sprite.hpp"
 #include "sprite/sprite_manager.hpp"
+#include "supertux/info_box_line.hpp"
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "supertux/info_box_line.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 #include "video/drawing_context.hpp"
 
-InfoBlock::InfoBlock(const Reader& lisp) :
+InfoBlock::InfoBlock(const ReaderMapping& lisp) :
   Block(SpriteManager::current()->create("images/objects/bonus_block/infoblock.sprite")),
   message(),
   shown_pct(0),
@@ -56,13 +57,10 @@ InfoBlock::InfoBlock(const Reader& lisp) :
 
 InfoBlock::~InfoBlock()
 {
-  for(std::vector<InfoBoxLine*>::const_iterator i = lines.begin(); i != lines.end(); ++i) {
-    delete *i;
-  }
 }
 
 void
-InfoBlock::save(lisp::Writer& writer) {
+InfoBlock::save(Writer& writer) {
   MovingObject::save(writer);
   writer.write("message", message, true);
 }

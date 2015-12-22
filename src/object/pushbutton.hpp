@@ -25,8 +25,8 @@
 class PushButton : public MovingSprite
 {
 public:
-  PushButton(const Reader& reader);
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
+  PushButton(const ReaderMapping& reader);
 
   HitResponse collision(GameObject& other, const CollisionHit& hit);
   void update(float elapsed_time);

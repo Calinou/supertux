@@ -20,24 +20,24 @@
 
 #include "audio/sound_manager.hpp"
 #include "math/random_generator.hpp"
+#include "object/sprite_particle.hpp"
 #include "sprite/sprite.hpp"
 #include "sprite/sprite_manager.hpp"
-#include "object/sprite_particle.hpp"
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
-Ghostflame::Ghostflame(const Reader& reader) :
+Ghostflame::Ghostflame(const ReaderMapping& reader) :
   BadGuy(reader, "images/creatures/flame/ghostflame.sprite", LAYER_FLOATINGOBJECTS),
   angle(0),
-  radius(100),
-  speed(2),
+  radius(),
+  speed(),
   light(0.0f,0.0f,0.0f),
   lightsprite(SpriteManager::current()->create("images/objects/lightmap_light/lightmap_light-small.sprite"))
 {
-  reader.get("radius", radius);
-  reader.get("speed", speed);
+  if ( !reader.get("radius", radius)) radius = 100;
+  if ( !reader.get("speed", speed)) speed = 2;
   bbox.set_pos(Vector(start_position.x + cos(angle) * radius,
                       start_position.y + sin(angle) * radius));
   countMe = false;

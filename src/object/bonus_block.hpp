@@ -25,10 +25,10 @@ class BonusBlock : public Block
 {
 public:
   BonusBlock(const Vector& pos, int data);
-  BonusBlock(const Reader& lisp);
+  BonusBlock(const ReaderMapping& lisp);
   virtual ~BonusBlock();
   HitResponse collision(GameObject& other, const CollisionHit& hit);
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
 
   void try_open(Player *player);
   void try_drop(Player *player);

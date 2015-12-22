@@ -25,8 +25,9 @@
 #include "util/gettext.hpp"
 #include "util/log.hpp"
 #include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
-ScriptedObject::ScriptedObject(const Reader& lisp) :
+ScriptedObject::ScriptedObject(const ReaderMapping& lisp) :
   MovingSprite(lisp, LAYER_OBJECTS, COLGROUP_MOVING_STATIC),
   physic(),
   name(),
@@ -37,7 +38,7 @@ ScriptedObject::ScriptedObject(const Reader& lisp) :
   new_vel()
 {
   lisp.get("name", name);
-  if(name == "") {
+  if(name.empty()) {
     name = "unnamed" + std::to_string(graphicsRandom.rand());
     log_warning << "Scripted object must have a name specified, setting to: " << name << std::endl;
   }
@@ -54,7 +55,7 @@ ScriptedObject::ScriptedObject(const Reader& lisp) :
 }
 
 void
-ScriptedObject::save(lisp::Writer& writer){
+ScriptedObject::save(Writer& writer){
   MovingSprite::save(writer);
   writer.write("width",bbox.get_width());
   writer.write("height",bbox.get_height());

@@ -27,7 +27,7 @@ public:
   virtual bool do_save() const {
     return false;
   }
-  InvisibleBlock(const Reader& lisp);
+  InvisibleBlock(const ReaderMapping& lisp);
 
   virtual void draw(DrawingContext& context);
   virtual bool collides(GameObject& other, const CollisionHit& hit);

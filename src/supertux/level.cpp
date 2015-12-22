@@ -17,9 +17,6 @@
 #include "supertux/level.hpp"
 
 #include "badguy/goldbomb.hpp"
-#include "lisp/list_iterator.hpp"
-#include "lisp/parser.hpp"
-#include "lisp/writer.hpp"
 #include "object/bonus_block.hpp"
 #include "object/coin.hpp"
 #include "physfs/ifile_streambuf.hpp"
@@ -28,6 +25,7 @@
 #include "supertux/tile_set.hpp"
 #include "trigger/secretarea_trigger.hpp"
 #include "util/file_system.hpp"
+#include "util/writer.hpp"
 
 #include <sstream>
 #include <stdexcept>
@@ -44,103 +42,13 @@ Level::Level() :
   sectors(),
   stats(),
   target_time(),
-  tileset(NULL),
-  free_tileset(false)
+  tileset("images/tiles.strf")
 {
 }
 
 Level::~Level()
 {
-  for(Sectors::iterator i = sectors.begin(); i != sectors.end(); ++i)
-    delete *i;
-  if(free_tileset)
-    delete tileset;
-}
-
-void
-Level::load(const std::string& filepath)
-{
-  try {
-    filename = filepath;
-    lisp::Parser parser;
-    const lisp::Lisp* root = parser.parse(filepath);
-
-    const lisp::Lisp* level = root->get_lisp("supertux-level");
-    if(!level)
-      throw std::runtime_error("file is not a supertux-level file.");
-
-    int version = 1;
-    level->get("version", version);
-    if(version == 1) {
-      log_info << "[" <<  filepath << "] level uses old format: version 1" << std::endl;
-      tileset = TileManager::current()->get_tileset("images/tiles.strf");
-      load_old_format(*level);
-      return;
-    }
-
-    const lisp::Lisp* tilesets_lisp = level->get_lisp("tilesets");
-    if(tilesets_lisp != NULL) {
-      tileset      = TileManager::current()->parse_tileset_definition(*tilesets_lisp).release();
-      free_tileset = true;
-    }
-    std::string tileset_name;
-    if(level->get("tileset", tileset_name)) {
-      if(tileset != NULL) {
-        log_warning << "[" <<  filepath << "] multiple tilesets specified in level" << std::endl;
-      } else {
-        tileset = TileManager::current()->get_tileset(tileset_name);
-      }
-    }
-    /* load default tileset */
-    if(tileset == NULL) {
-      tileset = TileManager::current()->get_tileset("images/tiles.strf");
-    }
-    current_tileset = tileset;
-
-    contact = "";
-    license = "";
-
-    lisp::ListIterator iter(level);
-    while(iter.next()) {
-      const std::string& token = iter.item();
-      if(token == "version") {
-        iter.value()->get(version);
-        if(version > 2) {
-          log_warning << "[" <<  filepath << "] level format newer than application" << std::endl;
-        }
-      } else if(token == "tileset" || token == "tilesets") {
-        continue;
-      } else if(token == "name") {
-        iter.value()->get(name);
-      } else if(token == "author") {
-        iter.value()->get(author);
-      } else if(token == "contact") {
-        iter.value()->get(contact);
-      } else if(token == "license") {
-        iter.value()->get(license);
-      } else if(token == "on-menukey-script") {
-        iter.value()->get(on_menukey_script);
-      } else if(token == "sector") {
-        Sector* sector = new Sector(this);
-        sector->parse(*(iter.lisp()));
-        add_sector(sector);
-      } else if(token == "target-time") {
-        iter.value()->get(target_time);
-      } else {
-        log_warning << "[" <<  filepath << "] Unknown token '" << token << "' in level file" << std::endl;
-      }
-    }
-
-    if (license == "") {
-      log_warning << "[" <<  filepath << "] The level author \"" << author << "\" did not specify a license for this level \"" << name << "\". You might not be allowed to share it." << std::endl;
-    }
-  } catch(std::exception& e) {
-    std::stringstream msg;
-    msg << "Problem when reading level '" << filepath << "': " << e.what();
-    throw std::runtime_error(msg.str());
-  }
-
-  current_tileset = NULL;
+  sectors.clear();
 }
 
 void
@@ -171,7 +79,7 @@ Level::save(const std::string& filepath)
       }
     }
 
-    lisp::Writer writer(filepath);
+    Writer writer(filepath);
     writer.start_list("supertux-level");
     // Starts writing to supertux level file. Keep this at the very beginning.
 
@@ -192,8 +100,7 @@ Level::save(const std::string& filepath)
     }
 
     for(auto i = sectors.begin(); i != sectors.end(); ++i) {
-      Sector* sec = *i;
-      sec->save(writer);
+      (*i)->save(writer);
     }
 
     // Ends writing to supertux level file. Keep this at the very end.
@@ -207,36 +114,25 @@ Level::save(const std::string& filepath)
 }
 
 void
-Level::load_old_format(const Reader& reader)
-{
-  reader.get("name", name);
-  reader.get("author", author);
-
-  Sector* sector = new Sector(this);
-  sector->parse_old_format(reader);
-  add_sector(sector);
-}
-
-void
-Level::add_sector(Sector* sector)
+Level::add_sector(std::unique_ptr<Sector> sector)
 {
   Sector* test = get_sector(sector->get_name());
-  if(test != 0) {
+  if (test != nullptr) {
     throw std::runtime_error("Trying to add 2 sectors with same name");
+  } else {
+    sectors.push_back(std::move(sector));
   }
-  sectors.push_back(sector);
 }
 
 Sector*
 Level::get_sector(const std::string& name_) const
 {
-  for(Sectors::const_iterator i = sectors.begin(); i != sectors.end(); ++i) {
-    Sector* sector = *i;
-    if(sector->get_name() == name_)
-      return sector;
+  for(auto const& sector : sectors) {
+    if(sector->get_name() == name_) {
+      return sector.get();
+    }
   }
-
-  return 0;
+  return nullptr;
 }
 
 size_t
@@ -248,15 +144,14 @@ Level::get_sector_count() const
 Sector*
 Level::get_sector(size_t num) const
 {
-  return sectors.at(num);
+  return sectors.at(num).get();
 }
 
 int
 Level::get_total_coins() const
 {
   int total_coins = 0;
-  for(Sectors::const_iterator i = sectors.begin(); i != sectors.end(); ++i) {
-    Sector* sector = *i;
+  for(auto const& sector : sectors) {
     for(auto o = sector->gameobjects.begin(); o != sector->gameobjects.end(); ++o) {
       Coin* coin = dynamic_cast<Coin*>(o->get());
       if(coin)
@@ -291,8 +186,9 @@ int
 Level::get_total_badguys() const
 {
   int total_badguys = 0;
-  for(Sectors::const_iterator i = sectors.begin(); i != sectors.end(); ++i)
-    total_badguys += (*i)->get_total_badguys();
+  for(auto const& sector : sectors) {
+    total_badguys += sector->get_total_badguys();
+  }
   return total_badguys;
 }
 
@@ -300,8 +196,9 @@ int
 Level::get_total_secrets() const
 {
   int total_secrets = 0;
-  for(auto i = sectors.begin(); i != sectors.end(); ++i)
-    total_secrets += (*i)->get_total_count<SecretAreaTrigger>();
+  for(auto const& sector : sectors) {
+    total_secrets += sector->get_total_count<SecretAreaTrigger>();
+  }
   return total_secrets;
 }
 

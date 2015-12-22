@@ -20,6 +20,8 @@
 
 #include "math/random_generator.hpp"
 #include "supertux/globals.hpp"
+#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 #include "video/drawing_context.hpp"
 #include "util/gettext.hpp"
 
@@ -31,18 +33,18 @@ CloudParticleSystem::CloudParticleSystem() :
 
   // create some random clouds
   for(size_t i=0; i<15; ++i) {
-    CloudParticle* particle = new CloudParticle;
+    auto particle = std::unique_ptr<CloudParticle>(new CloudParticle);
     particle->pos.x = graphicsRandom.rand(static_cast<int>(virtual_width));
     particle->pos.y = graphicsRandom.rand(static_cast<int>(virtual_height));
     particle->texture = cloudimage;
     particle->speed = -graphicsRandom.randf(25.0, 54.0);
 
-    particles.push_back(particle);
+    particles.push_back(std::move(particle));
   }
 }
 
 void
-CloudParticleSystem::parse(const Reader& reader)
+CloudParticleSystem::parse(const ReaderMapping& reader)
 {
   z_pos = reader_get_layer (reader, /* default = */ LAYER_BACKGROUND1);
 }
@@ -53,9 +55,8 @@ CloudParticleSystem::~CloudParticleSystem()
 
 void CloudParticleSystem::update(float elapsed_time)
 {
-  std::vector<Particle*>::iterator i;
-  for(i = particles.begin(); i != particles.end(); ++i) {
-    CloudParticle* particle = (CloudParticle*) *i;
+  for(auto i = particles.begin(); i != particles.end(); ++i) {
+    CloudParticle* particle = (CloudParticle*)i->get();
     particle->pos.x += particle->speed * elapsed_time;
   }
 }

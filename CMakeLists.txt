@@ -224,6 +224,7 @@ IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external/squirrel/CMakeLists.txt)
   message(FATAL_ERROR "squirrel submodule is not checked out or ${CMAKE_CURRENT_SOURCE_DIR}/external/squirrel/CMakeLists.txt is missing")
 ENDIF()
 
+SET(SQUIRREL_IS_SUBPROJECT ON)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/external/squirrel)
 
 ## Add squirrel lib dir to search path
@@ -237,6 +238,7 @@ IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external/tinygettext/CMakeLists.txt)
   message(FATAL_ERROR "tinygettext submodule is not checked out or ${CMAKE_CURRENT_SOURCE_DIR}/external/tinygettext/CMakeLists.txt is missing")
 ENDIF()
 
+SET(TINYGETTEXT_IS_SUBPROJECT ON)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/external/tinygettext)
 
 ## Add tinygettext lib dir to search path
@@ -252,6 +254,7 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR}/external/squirrel/include/)
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/external/tinygettext/include/)
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/external/findlocale/)
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/external/obstack/)
+include_directories (${CMAKE_CURRENT_SOURCE_DIR}/external/sexp-cpp/include/)
 
 IF(WIN32)
   ADD_DEFINITIONS(-D_USE_MATH_DEFINES -DNOMINMAX)
@@ -268,10 +271,23 @@ FILE(GLOB SUPERTUX_RESOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${PROJECT_BIN
 FILE(GLOB TINYGETTEXT_SOURCES_CXX RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} external/tinygettext/src/*.cpp)
 SET_SOURCE_FILES_PROPERTIES(${TINYGETTEXT_SOURCES_CXX} PROPERTIES COMPILE_DEFINITIONS HAVE_SDL)
 
+IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external/sexp-cpp/CMakeLists.txt)
+  message(FATAL_ERROR "sexp-cpp submodule is not checked out or ${CMAKE_CURRENT_SOURCE_DIR}/external/sexp-cpp/CMakeLists.txt is missing")
+ENDIF()
+FILE(GLOB SEXP_SOURCES_CXX RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} external/sexp-cpp/src/*.cpp)
+ADD_LIBRARY(sexp STATIC ${SEXP_SOURCES_CXX})
+
+
 IF(HAVE_OPENGL)
   FILE(GLOB SUPERTUX_OPENGL_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/video/gl/*.cpp)
   SET(SUPERTUX_SOURCES_CXX ${SUPERTUX_SOURCES_CXX} ${SUPERTUX_OPENGL_SOURCES})
 ENDIF(HAVE_OPENGL)
+
+## Sort source lists to have deterministic linking order
+LIST(SORT SUPERTUX_SOURCES_C)
+LIST(SORT SUPERTUX_SOURCES_CXX)
+LIST(SORT SUPERTUX_RESOURCES)
+LIST(SORT TINYGETTEXT_SOURCES_CXX)
 
 ## Build miniswig and generate miniswig wrapper
 
@@ -472,9 +488,11 @@ TARGET_LINK_LIBRARIES(supertux2_lib PUBLIC ${SDL2IMAGE_LIBRARIES})
 
 TARGET_LINK_LIBRARIES(supertux2_lib PUBLIC squirrel)
 TARGET_LINK_LIBRARIES(supertux2_lib PUBLIC tinygettext)
+TARGET_LINK_LIBRARIES(supertux2_lib PUBLIC sexp)
 TARGET_LINK_LIBRARIES(supertux2_lib PUBLIC ${OPENAL_LIBRARY})
 TARGET_LINK_LIBRARIES(supertux2_lib PUBLIC ${OGGVORBIS_LIBRARIES})
 TARGET_LINK_LIBRARIES(supertux2_lib PUBLIC ${PHYSFS_LIBRARY})
+
 IF(HAVE_OPENGL)
     TARGET_LINK_LIBRARIES(supertux2_lib PUBLIC ${OPENGL_LIBRARY})
     IF(GLBINDING_FOUND)

@@ -18,7 +18,6 @@
 
 #include "audio/sound_manager.hpp"
 #include "badguy/badguy.hpp"
-#include "lisp/list_iterator.hpp"
 #include "object/broken_brick.hpp"
 #include "object/coin.hpp"
 #include "object/flower.hpp"
@@ -28,6 +27,7 @@
 #include "sprite/sprite_manager.hpp"
 #include "supertux/constants.hpp"
 #include "supertux/sector.hpp"
+#include "util/reader_mapping.hpp"
 
 static const float BOUNCY_BRICK_MAX_OFFSET = 8;
 static const float BOUNCY_BRICK_SPEED = 90;
@@ -47,7 +47,7 @@ Block::Block(SpritePtr newsprite) :
   SoundManager::current()->preload("sounds/brick.wav");
 }
 
-Block::Block(const Reader& lisp, std::string sprite_file) :
+Block::Block(const ReaderMapping& lisp, std::string sprite_file) :
   sprite(),
   bouncing(false),
   breaking(false),

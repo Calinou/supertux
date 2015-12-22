@@ -25,7 +25,7 @@
 #include "supertux/object_factory.hpp"
 #include "util/gettext.hpp"
 
-Zeekling::Zeekling(const Reader& reader) :
+Zeekling::Zeekling(const ReaderMapping& reader) :
   BadGuy(reader, "images/creatures/zeekling/zeekling.sprite"),
   speed(),
   diveRecoverTimer(),

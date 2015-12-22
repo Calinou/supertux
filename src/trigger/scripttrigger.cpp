@@ -21,9 +21,9 @@
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "trigger/scripttrigger.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
-ScriptTrigger::ScriptTrigger(const Reader& reader) :
+ScriptTrigger::ScriptTrigger(const ReaderMapping& reader) :
   triggerevent(),
   script()
 {
@@ -37,7 +37,7 @@ ScriptTrigger::ScriptTrigger(const Reader& reader) :
   bbox.set_size(w, h);
   reader.get("script", script);
   reader.get("button", must_activate);
-  if(script == "") {
+  if(script.empty()) {
     throw std::runtime_error("Need to specify a script for trigger object");
   }
 
@@ -62,7 +62,7 @@ ScriptTrigger::~ScriptTrigger()
 }
 
 void
-ScriptTrigger::save(lisp::Writer& writer) {
+ScriptTrigger::save(Writer& writer) {
   MovingObject::save(writer);
   writer.write("width", bbox.get_width());
   writer.write("height", bbox.get_height());

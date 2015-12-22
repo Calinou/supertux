@@ -26,9 +26,9 @@
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
-Firefly::Firefly(const Reader& lisp) :
+Firefly::Firefly(const ReaderMapping& lisp) :
    MovingSprite(lisp, "images/objects/resetpoints/default-resetpoint.sprite", LAYER_TILES, COLGROUP_TOUCHABLE),
    activated(false),
    initial_position()
@@ -38,7 +38,7 @@ Firefly::Firefly(const Reader& lisp) :
     reactivate();
     return;
   }
-  if( sprite_name == "" ){
+  if (sprite_name.empty()) {
     sprite_name = "images/objects/resetpoints/default-resetpoint.sprite";
     reactivate();
     return;

@@ -17,17 +17,20 @@
 #ifndef HEADER_SUPERTUX_OBJECT_INFOBLOCK_HPP
 #define HEADER_SUPERTUX_OBJECT_INFOBLOCK_HPP
 
+#include <memory>
+
 #include "object/block.hpp"
+#include "supertux/info_box_line.hpp"
 #include "supertux/textscroller.hpp"
 
 class InfoBlock : public Block
 {
 public:
-  InfoBlock(const Reader& lisp);
+  InfoBlock(const ReaderMapping& lisp);
   virtual ~InfoBlock();
   void update(float elapsed_time);
   void draw(DrawingContext& context);
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
 
   void show_message();
   void hide_message();
@@ -48,7 +51,7 @@ protected:
   //bool stopped;
   float shown_pct; /**< Value in the range of 0..1, depending on how much of the infobox is currently shown */
   float dest_pct; /**< With each call to update(), shown_pct will slowly transition to this value */
-  std::vector<InfoBoxLine*> lines; /**< lines of text (or images) to display */
+  std::vector<std::unique_ptr<InfoBoxLine> > lines; /**< lines of text (or images) to display */
   float lines_height;
 };
 

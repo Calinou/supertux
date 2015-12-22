@@ -22,6 +22,7 @@
 #include "math/random_generator.hpp"
 #include "supertux/globals.hpp"
 #include "util/gettext.hpp"
+#include "util/reader.hpp"
 #include "video/drawing_context.hpp"
 
 //FIXME: Sometimes both ghosts have the same image
@@ -36,18 +37,18 @@ GhostParticleSystem::GhostParticleSystem()
   // create two ghosts
   size_t ghostcount = 2;
   for(size_t i=0; i<ghostcount; ++i) {
-    GhostParticle* particle = new GhostParticle;
+    auto particle = std::unique_ptr<GhostParticle>(new GhostParticle);
     particle->pos.x = graphicsRandom.randf(virtual_width);
     particle->pos.y = graphicsRandom.randf(SCREEN_HEIGHT);
     int size = graphicsRandom.rand(2);
     particle->texture = ghosts[size];
     particle->speed = graphicsRandom.randf(std::max(50, (size * 10)), 180 + (size * 10));
-    particles.push_back(particle);
+    particles.push_back(std::move(particle));
   }
 }
 
 void
-GhostParticleSystem::parse(const Reader& reader)
+GhostParticleSystem::parse(const ReaderMapping& reader)
 {
   z_pos = reader_get_layer (reader, /* default = */ LAYER_BACKGROUND1);
 }
@@ -58,9 +59,8 @@ GhostParticleSystem::~GhostParticleSystem()
 
 void GhostParticleSystem::update(float elapsed_time)
 {
-  std::vector<Particle*>::iterator i;
-  for(i = particles.begin(); i != particles.end(); ++i) {
-    GhostParticle* particle = (GhostParticle*) *i;
+  for(auto i = particles.begin(); i != particles.end(); ++i) {
+    GhostParticle* particle = (GhostParticle*)i->get();
     particle->pos.y -= particle->speed * elapsed_time;
     particle->pos.x -= particle->speed * elapsed_time;
     if(particle->pos.y > SCREEN_HEIGHT) {

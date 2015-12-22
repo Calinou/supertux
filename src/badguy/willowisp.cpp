@@ -29,18 +29,18 @@
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
 #include "util/log.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
 static const float FLYSPEED = 64; /**< speed in px per second */
 static const float TRACK_RANGE = 384; /**< at what distance to start tracking the player */
 static const float VANISH_RANGE = 512; /**< at what distance to stop tracking and vanish */
 static const std::string SOUNDFILE = "sounds/willowisp.wav";
 
-WillOWisp::WillOWisp(const Reader& reader) :
+WillOWisp::WillOWisp(const ReaderMapping& reader) :
   BadGuy(reader, "images/creatures/willowisp/willowisp.sprite", LAYER_FLOATINGOBJECTS),
   mystate(STATE_IDLE),
-  target_sector("main"),
-  target_spawnpoint("main"),
+  target_sector(),
+  target_spawnpoint(),
   hit_script(),
   sound_source(),
   path(),
@@ -50,24 +50,20 @@ WillOWisp::WillOWisp(const Reader& reader) :
   vanish_range(),
   lightsprite(SpriteManager::current()->create("images/objects/lightmap_light/lightmap_light-small.sprite"))
 {
-  bool running = false;
-  flyspeed     = FLYSPEED;
-  track_range  = TRACK_RANGE;
-  vanish_range = VANISH_RANGE;
+  if ( !reader.get("sector", target_sector)) target_sector = "main";
+  if ( !reader.get("spawnpoint", target_spawnpoint)) target_spawnpoint = "main";
+  if ( !reader.get("flyspeed", flyspeed)) flyspeed = FLYSPEED;
+  if ( !reader.get("track-range", track_range)) track_range = TRACK_RANGE;
+  if ( !reader.get("vanish-range", vanish_range)) vanish_range = VANISH_RANGE;
+  if ( !reader.get("hit-script", hit_script)) hit_script = "";
 
-  reader.get("sector", target_sector);
-  reader.get("spawnpoint", target_spawnpoint);
-  reader.get("name", name);
-  reader.get("flyspeed", flyspeed);
-  reader.get("track-range", track_range);
-  reader.get("vanish-range", vanish_range);
-  reader.get("hit-script", hit_script);
-  reader.get("running", running);
+  bool running;
+  if ( !reader.get("running", running)) running = false;
 
-  const lisp::Lisp* pathLisp = reader.get_lisp("path");
-  if(pathLisp != NULL) {
+  ReaderMapping path_mapping;
+  if(reader.get("path", path_mapping)) {
     path.reset(new Path());
-    path->read(*pathLisp);
+    path->read(path_mapping);
     walker.reset(new PathWalker(path.get(), running));
     if(running)
       mystate = STATE_PATHMOVING_TRACK;
@@ -84,7 +80,7 @@ WillOWisp::WillOWisp(const Reader& reader) :
 }
 
 void
-WillOWisp::save(lisp::Writer& writer) {
+WillOWisp::save(Writer& writer) {
   BadGuy::save(writer);
   writer.write("sector", target_sector);
   writer.write("spawnpoint", target_spawnpoint);

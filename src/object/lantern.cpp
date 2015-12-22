@@ -16,6 +16,8 @@
 
 #include "object/lantern.hpp"
 
+#include <algorithm>
+
 #include "audio/sound_manager.hpp"
 #include "badguy/treewillowisp.hpp"
 #include "badguy/willowisp.hpp"
@@ -23,11 +25,11 @@
 #include "sprite/sprite_manager.hpp"
 #include "supertux/object_factory.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
 
 #include <algorithm>
+#include "util/reader_mapping.hpp"
 
-Lantern::Lantern(const Reader& reader) :
+Lantern::Lantern(const ReaderMapping& reader) :
   Rock(reader, "images/objects/lantern/lantern.sprite"),
   lightcolor(1.0f, 1.0f, 1.0f),
   lightsprite()
@@ -53,7 +55,7 @@ Lantern::Lantern(const Vector& pos) :
 }
 
 void
-Lantern::save(lisp::Writer& writer) {
+Lantern::save(Writer& writer) {
   MovingSprite::save(writer);
   writer.write("color", lightcolor.toVector(false));
 }

@@ -20,9 +20,9 @@
 #include "sprite/sprite.hpp"
 #include "sprite/sprite_manager.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 
-Torch::Torch(const Reader& reader) :
+Torch::Torch(const ReaderMapping& reader) :
   m_torch(),
   m_flame(),
   m_flame_glow(),

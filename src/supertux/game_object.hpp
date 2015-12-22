@@ -21,7 +21,7 @@
 #include <string>
 
 #include "editor/object_settings.hpp"
-#include "lisp/writer.hpp"
+#include "util/writer.hpp"
 
 class DrawingContext;
 class GameObject;
@@ -61,7 +61,7 @@ public:
   /** This function saves the object.
    *  Editor will use that.
    */
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
   virtual std::string get_class() const {
     return "game-object";
   }

@@ -36,10 +36,10 @@ class Camera : public GameObject,
 public:
   Camera(Sector* sector, std::string name = "");
   virtual ~Camera();
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
 
   /// parse camera mode from lisp file
-  void parse(const Reader& reader);
+  void parse(const ReaderMapping& reader);
 
   /// reset camera position
   void reset(const Vector& tuxpos);
@@ -136,7 +136,7 @@ private:
   float scroll_to_pos;
   float scrollspeed;
 
-  CameraConfig *config;
+  std::unique_ptr<CameraConfig> config;
 
 private:
   Camera(const Camera&);

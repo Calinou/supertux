@@ -23,7 +23,7 @@
 #include "object/explosion.hpp"
 #include "util/gettext.hpp"
 
-SkyDive::SkyDive(const Reader& reader) :
+SkyDive::SkyDive(const ReaderMapping& reader) :
   BadGuy(reader, "images/creatures/skydive/skydive.sprite"),
   is_grabbed(false)
 {

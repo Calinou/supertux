@@ -21,24 +21,24 @@
 #include "sprite/sprite.hpp"
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
-#include "util/reader.hpp"
 #include "util/gettext.hpp"
+#include "util/reader_mapping.hpp"
 
 namespace {
 const float MUZZLE_Y = 25; /**< [px] muzzle y-offset from top */
 }
 
-DartTrap::DartTrap(const Reader& reader) :
+DartTrap::DartTrap(const ReaderMapping& reader) :
   BadGuy(reader, "images/creatures/darttrap/darttrap.sprite", LAYER_TILES-1),
-  initial_delay(0),
-  fire_delay(2),
-  ammo(-1),
+  initial_delay(),
+  fire_delay(),
+  ammo(),
   state(IDLE),
   fire_timer()
 {
-  reader.get("initial-delay", initial_delay);
-  reader.get("fire-delay", fire_delay);
-  reader.get("ammo", ammo);
+  if ( !reader.get("initial-delay", initial_delay) ) initial_delay = 0;
+  if ( !reader.get("fire-delay", fire_delay)) fire_delay = 2;
+  if ( !reader.get("ammo", ammo)) ammo = -1;
   countMe = false;
   SoundManager::current()->preload("sounds/dartfire.wav");
   if (start_dir == AUTO) { log_warning << "Setting a DartTrap's direction to AUTO is no good idea" << std::endl; }
@@ -48,7 +48,7 @@ DartTrap::DartTrap(const Reader& reader) :
 }
 
 void
-DartTrap::save(lisp::Writer& writer) {
+DartTrap::save(Writer& writer) {
   BadGuy::save(writer);
   writer.write("initial-delay", initial_delay);
   writer.write("fire-delay", fire_delay);

@@ -22,7 +22,7 @@
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
 
-PneumaticPlatform::PneumaticPlatform(const Reader& reader) :
+PneumaticPlatform::PneumaticPlatform(const ReaderMapping& reader) :
   MovingSprite(reader, LAYER_OBJECTS, COLGROUP_STATIC),
   master(0),
   slave(0),

@@ -36,14 +36,10 @@ ParticleSystem::ParticleSystem(float max_particle_size_) :
 
 ParticleSystem::~ParticleSystem()
 {
-  std::vector<Particle*>::iterator i;
-  for(i = particles.begin(); i != particles.end(); ++i) {
-    delete *i;
-  }
 }
 
 void
-ParticleSystem::save(lisp::Writer& writer){
+ParticleSystem::save(Writer& writer){
   GameObject::save(writer);
   writer.write("z-pos",z_pos);
 }
@@ -56,9 +52,8 @@ void ParticleSystem::draw(DrawingContext& context)
   context.push_transform();
   context.set_translation(Vector(max_particle_size,max_particle_size));
 
-  std::vector<Particle*>::iterator i;
-  for(i = particles.begin(); i != particles.end(); ++i) {
-    Particle* particle = *i;
+  for(auto i = particles.begin(); i != particles.end(); ++i) {
+    Particle* particle = i->get();
 
     // remap x,y coordinates onto screencoordinates
     Vector pos;

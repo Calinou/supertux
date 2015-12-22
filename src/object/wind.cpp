@@ -24,10 +24,10 @@
 #include "supertux/object_factory.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 #include "video/drawing_context.hpp"
 
-Wind::Wind(const Reader& reader) :
+Wind::Wind(const ReaderMapping& reader) :
   blowing(true),
   speed(),
   acceleration(100),
@@ -54,7 +54,7 @@ Wind::Wind(const Reader& reader) :
 }
 
 void
-Wind::save(lisp::Writer& writer) {
+Wind::save(Writer& writer) {
   MovingObject::save(writer);
   writer.write("width", bbox.get_width());
   writer.write("height", bbox.get_height());
@@ -116,7 +116,7 @@ Wind::collision(GameObject& other, const CollisionHit& )
 void
 Wind::expose(HSQUIRRELVM vm, SQInteger table_idx)
 {
-  if (name == "")
+  if (name.empty())
     return;
 
   scripting::Wind* _this = new scripting::Wind(this);
@@ -126,7 +126,7 @@ Wind::expose(HSQUIRRELVM vm, SQInteger table_idx)
 void
 Wind::unexpose(HSQUIRRELVM vm, SQInteger table_idx)
 {
-  if (name == "")
+  if (name.empty())
     return;
 
   scripting::unexpose_object(vm, table_idx, name);

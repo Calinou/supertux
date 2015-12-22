@@ -23,12 +23,12 @@
 #include "supertux/resources.hpp"
 #include "supertux/sector.hpp"
 #include "util/gettext.hpp"
-#include "util/reader.hpp"
+#include "util/reader_mapping.hpp"
 #include "util/writer.hpp"
 
 static const float MESSAGE_TIME=3.5;
 
-SecretAreaTrigger::SecretAreaTrigger(const Reader& reader) :
+SecretAreaTrigger::SecretAreaTrigger(const ReaderMapping& reader) :
   message_timer(),
   message_displayed(),
   message(),
@@ -43,7 +43,7 @@ SecretAreaTrigger::SecretAreaTrigger(const Reader& reader) :
   bbox.set_size(w, h);
   reader.get("fade-tilemap", fade_tilemap);
   reader.get("message", message);
-  if(message == "") {
+  if(message.empty()) {
     message = _("You found a secret area!");
   }
   reader.get("script", script);
@@ -63,7 +63,7 @@ SecretAreaTrigger::SecretAreaTrigger(const Rectf& area, std::string fade_tilemap
 }
 
 void
-SecretAreaTrigger::save(lisp::Writer& writer) {
+SecretAreaTrigger::save(Writer& writer) {
   MovingObject::save(writer);
   writer.write("width", bbox.get_width());
   writer.write("height", bbox.get_height());

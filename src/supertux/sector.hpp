@@ -21,13 +21,11 @@
 #include <squirrel.h>
 #include <stdint.h>
 
-#include "lisp/writer.hpp"
 #include "scripting/ssector.hpp"
 #include "supertux/direction.hpp"
 #include "supertux/game_object_ptr.hpp"
 #include "util/reader_fwd.hpp"
-#include "util/writer_fwd.hpp"
-#include "util/currenton.hpp"
+#include "util/writer.hpp"
 #include "video/color.hpp"
 #include "object/anchor_point.hpp"
 
@@ -64,20 +62,17 @@ enum MusicType {
  *
  * Sectors contain GameObjects, e.g. Badguys and Players.
  */
-class Sector : public scripting::SSector,
-               public Currenton<Sector>
+class Sector : public scripting::SSector
 {
+public:
+  friend class SectorParser;
+
 public:
   Sector(Level* parent);
   ~Sector();
 
   /// get parent level
   Level* get_level() const;
-
-  /// read sector from lisp file
-  void parse(const Reader& lisp);
-  void save(lisp::Writer &writer);
-  void parse_old_format(const Reader& lisp);
 
   /// activates this sector (change music, initialize player class, ...)
   void activate(const std::string& spawnpoint);
@@ -88,6 +83,8 @@ public:
   void update_game_objects();
 
   void draw(DrawingContext& context);
+
+  void save(Writer &writer);
 
   /**
    * runs a script in the context of the sector (sector_table will be the
@@ -250,7 +247,7 @@ private:
 
   void collision_static_constrains(MovingObject& object);
 
-  GameObjectPtr parse_object(const std::string& name, const Reader& lisp);
+  GameObjectPtr parse_object(const std::string& name, const ReaderMapping& lisp);
 
   void fix_old_tiles();
 

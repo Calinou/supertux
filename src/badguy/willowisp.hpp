@@ -31,8 +31,8 @@ class WillOWisp : public BadGuy,
                   public ScriptInterface
 {
 public:
-  WillOWisp(const Reader& reader);
-  virtual void save(lisp::Writer& writer);
+  virtual void save(Writer& writer);
+  WillOWisp(const ReaderMapping& reader);
 
   void activate();
   void deactivate();
