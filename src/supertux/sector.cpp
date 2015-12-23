@@ -1421,10 +1421,11 @@ Sector::save(Writer &writer)
   }
 
   // saving spawnpoints
-  for(auto i = spawnpoints.begin(); i != spawnpoints.end(); ++i) {
+  /*for(auto i = spawnpoints.begin(); i != spawnpoints.end(); ++i) {
     std::shared_ptr<SpawnPoint> spawny = *i;
     spawny->save(writer);
-  }
+  }*/
+  // Do not save spawnpoints since we have spawnpoint markers.
 
   // saving oběcts (not really)
   for(auto i = gameobjects.begin(); i != gameobjects.end(); ++i) {
