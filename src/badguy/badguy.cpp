@@ -180,7 +180,7 @@ BadGuy::update(float elapsed_time)
   switch(state) {
     case STATE_ACTIVE:
       is_active_flag = true;
-      if (Editor::current()) if (Editor::current()->levelloaded) {
+      if (EditorActive()) {
         break;
       }
       active_update(elapsed_time);
@@ -588,11 +588,9 @@ bool
 BadGuy::is_offscreen() const
 {
   Vector dist;
-  if (Editor::current()) {
-    if (Editor::current()->levelloaded) {
-      Camera *cam = Sector::current()->camera;
-      dist = cam->get_center() - bbox.get_middle();
-    }
+  if (EditorActive()) {
+    Camera *cam = Sector::current()->camera;
+    dist = cam->get_center() - bbox.get_middle();
   } else {
     Player* player = get_nearest_player();
     if (!player) return false;

@@ -972,7 +972,7 @@ void
 Sector::handle_collisions()
 {
 
-  if (Editor::current()) if(Editor::current()->levelloaded) {
+  if (EditorActive()) {
     return;
     //Oběcts in editor shouldn't collide.
   }
