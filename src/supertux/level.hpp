@@ -49,7 +49,7 @@ public:
   ~Level();
 
   // loads a levelfile
-  void load(const std::string& filename);
+  //void load(const std::string& filename);
 
   // saves to a levelfile
   void save(const std::string& filename);

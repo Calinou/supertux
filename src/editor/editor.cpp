@@ -26,6 +26,7 @@
 #include "supertux/menu/editor_levelset_select_menu.hpp"
 #include "supertux/game_object.hpp"
 #include "supertux/level.hpp"
+#include "supertux/level_parser.hpp"
 #include "supertux/levelset_screen.hpp"
 #include "supertux/moving_object.hpp"
 #include "supertux/savegame.hpp"
@@ -250,9 +251,8 @@ void Editor::reload_level() {
   enabled = true;
   // Re/load level
   level = NULL;
-  level.reset(new Level);
+  level = LevelParser::from_file(world->get_basedir() + "/" + levelfile);
   levelloaded = true;
-  level->load(world->get_basedir() + "/" + levelfile);
   tileset = TileManager::current()->get_tileset(level->get_tileset());
   load_sector("main");
   currentsector->activate("main");
