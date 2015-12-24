@@ -52,6 +52,7 @@ public:
   }
 
   virtual ObjectSettings get_settings();
+  virtual void after_editor_set();
 
   void add_color(Color c);
 
