@@ -205,18 +205,27 @@ public:
     }
     else
     {
-      std::string physfs_userdir = PHYSFS_getUserDir();
-#ifdef _WIN32
-      userdir = FileSystem::join(physfs_userdir, PACKAGE_NAME);
-#else
-      userdir = FileSystem::join(physfs_userdir, "." PACKAGE_NAME);
-#endif
+		userdir = SDL_GetPrefPath("SuperTux","supertux2");
     }
 
     if (!FileSystem::is_directory(userdir))
     {
-      FileSystem::mkdir(userdir);
-      log_info << "Created SuperTux userdir: " << userdir << std::endl;
+      
+	  std::string physfs_userdir = PHYSFS_getUserDir();
+#ifdef _WIN32
+	  std::string olduserdir = FileSystem::join(physfs_userdir, PACKAGE_NAME);
+#else
+	  std::string olduserdir = FileSystem::join(physfs_userdir, "." PACKAGE_NAME);
+#endif
+	  if (FileSystem::is_directory(userdir)) {
+		  log_info << "Moved old config dir " << olduserdir << " to " << userdir << std::endl;
+		  rename(olduserdir.c_str(), userdir.c_str());
+	  }
+	  else
+	  {
+		  FileSystem::mkdir(userdir);
+		  log_info << "Created SuperTux userdir: " << userdir << std::endl;
+	  }
     }
 
     if (!PHYSFS_setWriteDir(userdir.c_str()))
